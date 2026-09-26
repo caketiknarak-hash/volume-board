@@ -123,6 +123,12 @@ tbody tr:last-child td{border-bottom:0}
 .pos{color:var(--pos)} .neg{color:var(--neg)}
 .dim{color:var(--muted)}
 .tl-cell{padding:6px 12px}
+/* Frozen columns: # and หุ้น. Rank has a fixed width so the symbol column knows its offset. */
+th.rk,td.rk{position:sticky; left:0; width:38px; min-width:38px; max-width:38px; box-sizing:border-box}
+th:nth-child(2),td:nth-child(2){position:sticky; left:38px; box-shadow:inset -1px 0 0 var(--border-strong)}
+td.rk,td:nth-child(2){background:var(--surface); z-index:1}
+th.rk,th:nth-child(2){z-index:3}
+tbody tr:hover td.rk,tbody tr:hover td:nth-child(2){background:var(--surface-2)}
 svg.tl{display:block}
 .legend{display:flex; gap:18px; flex-wrap:wrap; margin-top:18px;
   font-size:12.5px; color:var(--muted)}
@@ -240,13 +246,13 @@ svg.tl circle:hover{stroke:var(--ink); stroke-width:1.5}
         <th data-s="vol">วอลุ่มวันนั้น<span class="ar">▾</span></th>
         <th data-s="mult">เท่าของเฉลี่ย 50 วัน<span class="ar">▾</span></th>
         <th data-s="chg" class="on" title="ราคาเปลี่ยนแปลงในวันที่ติดป้ายล่าสุด">% วันนั้น<span class="ar">▾</span></th>
+        <th class="tl">จังหวะติดป้าย 3 เดือน</th>
         <th data-s="last">ราคาล่าสุด<span class="ar">▾</span></th>
         <th data-s="off52w">ห่างจุดสูงสุด<span class="ar">▾</span></th>
         <th data-s="turnover">มูลค่า/วัน<span class="ar">▾</span></th>
         <th data-s="wk">รายสัปดาห์<span class="ar">▾</span></th>
         <th data-s="n">ป้าย 3 ด.<span class="ar">▾</span></th>
         <th data-s="since">ข้อมูลตั้งแต่<span class="ar">▾</span></th>
-        <th class="tl">จังหวะติดป้าย 3 เดือน</th>
       </tr></thead>
       <tbody id="body"></tbody>
     </table>
@@ -368,6 +374,7 @@ function render(){
       <td>${fmtM(r.vol)}</td>
       <td>${r.mult.toFixed(1)}×</td>
       <td class="${r.chg >= 0 ? "pos" : "neg"}">${r.chg >= 0 ? "+" : ""}${r.chg.toFixed(1)}%</td>
+      <td class="tl-cell">${timeline(r.hist)}</td>
       <td>${CUR}${r.last.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
       <td class="${r.off52w >= -5 ? "pos" : ""}">${r.off52w >= 0 ? "+" : ""}${r.off52w.toFixed(1)}%</td>
       <td>${MONEY(r.turnover)}</td>
@@ -377,7 +384,6 @@ function render(){
       <td>${r.n}</td>
       <td class="since${+r.since.slice(0,4) >= 2020 ? " short" : ""}"
           data-since="${r.since}" data-bars="${r.bars}">${r.since.slice(0,4)}</td>
-      <td class="tl-cell">${timeline(r.hist)}</td>
     </tr>`).join("");
 }
 
