@@ -57,7 +57,7 @@ header{display:flex; flex-wrap:wrap; gap:16px 28px; align-items:flex-end;
   padding-bottom:18px; border-bottom:2px solid var(--border-strong); margin-bottom:22px}
 h1{font-size:26px; font-weight:700; letter-spacing:-.02em; margin:0; text-wrap:balance}
 .sub{color:var(--muted); font-size:13.5px; margin-top:5px}
-.note{color:var(--muted); font-size:12px; margin-top:6px; padding-left:8px; border-left:2px solid var(--border-strong)}
+.disclaim{color:var(--muted); font-size:12px; margin-top:6px; padding-left:8px; border-left:2px solid var(--border-strong)}
 .meta{margin-left:auto; display:flex; gap:22px; flex-wrap:wrap}
 .meta div{font-size:12px; color:var(--muted)}
 .meta .ago{display:block; font-size:11px; margin-top:1px}
@@ -102,14 +102,16 @@ th{position:sticky; top:0; z-index:2; background:var(--surface-2);
   text-align:right; font-size:11px; font-weight:600; text-transform:uppercase;
   letter-spacing:.06em; color:var(--muted); padding:11px 12px; white-space:nowrap;
   border-bottom:1px solid var(--border-strong); cursor:pointer; user-select:none}
-th:first-child,th:nth-child(2){text-align:left}
+th:nth-child(2),th:nth-child(3){text-align:left}
 th.tl{text-align:left; cursor:default}
 th:hover:not(.tl){color:var(--ink)}
 th .ar{opacity:.45; font-size:9px; margin-left:3px}
 td{padding:10px 12px; text-align:right; border-bottom:1px solid var(--border);
   font-family:"IBM Plex Mono",monospace; font-size:13px;
   font-variant-numeric:tabular-nums; white-space:nowrap}
-td:first-child,td:nth-child(2){text-align:left}
+td:nth-child(2),td:nth-child(3){text-align:left}
+th.on{color:var(--accent)}
+td.rk,th.rk{color:var(--muted); text-align:right; width:1%; padding-right:2px; cursor:default}
 tbody tr:hover{background:var(--surface-2)}
 tbody tr:last-child td{border-bottom:0}
 .sym{font-weight:600; font-size:13.5px; letter-spacing:.01em}
@@ -175,7 +177,7 @@ svg.tl circle:hover{stroke:var(--ink); stroke-width:1.5}
     <div>
       <h1>กระดานป้ายวอลุ่ม</h1>
       <div class="sub">หุ้นที่ทำวอลุ่มสูงสุดในรอบไตรมาส / ปี / ตั้งแต่เข้าตลาด</div>
-      <div class="note">ใช้คัดกรองว่า "มีอะไรเกิดขึ้นกับหุ้นตัวไหน" ไม่ใช่สัญญาณซื้อ — ทดสอบย้อนหลัง 36 เดือน ป้ายวอลุ่มอย่างเดียวชนะตลาดแค่ 45-47%</div>
+      <div class="disclaim">ใช้คัดกรองว่า "มีอะไรเกิดขึ้นกับหุ้นตัวไหน" ไม่ใช่สัญญาณซื้อ — ทดสอบย้อนหลัง 36 เดือน ป้ายวอลุ่มอย่างเดียวชนะตลาดแค่ 45-47%</div>
     </div>
     <div class="meta">
       <div>อัปเดตเมื่อ<b id="m-updated"></b><span class="ago" id="m-ago"></span></div>
@@ -212,6 +214,12 @@ svg.tl circle:hover{stroke:var(--ink); stroke-width:1.5}
         <button data-n="5" aria-pressed="false">ไม่เกิน 5%</button>
       </div>
     </div>
+    <div class="fgroup"><span class="flabel">วันวอลุ่มเข้า</span>
+      <div class="seg" id="upf">
+        <button data-u="all" aria-pressed="true">ไม่กรอง</button>
+        <button data-u="up" aria-pressed="false">เฉพาะวันบวก</button>
+      </div>
+    </div>
     <div class="fgroup"><span class="flabel">ป้ายรายสัปดาห์</span>
       <div class="seg" id="wkf">
         <button data-w="all" aria-pressed="true">ไม่กรอง</button>
@@ -225,12 +233,13 @@ svg.tl circle:hover{stroke:var(--ink); stroke-width:1.5}
   <div class="tablewrap">
     <table>
       <thead><tr>
+        <th class="rk">#</th>
         <th data-s="sym">หุ้น<span class="ar">▾</span></th>
         <th data-s="label">ป้ายล่าสุด<span class="ar">▾</span></th>
         <th data-s="date">วันที่<span class="ar">▾</span></th>
         <th data-s="vol">วอลุ่มวันนั้น<span class="ar">▾</span></th>
         <th data-s="mult">เท่าของเฉลี่ย 50 วัน<span class="ar">▾</span></th>
-        <th data-s="chg">% วันนั้น<span class="ar">▾</span></th>
+        <th data-s="chg" class="on" title="ราคาเปลี่ยนแปลงในวันที่ติดป้ายล่าสุด">% วันนั้น<span class="ar">▾</span></th>
         <th data-s="last">ราคาล่าสุด<span class="ar">▾</span></th>
         <th data-s="off52w">ห่างจุดสูงสุด<span class="ar">▾</span></th>
         <th data-s="turnover">มูลค่า/วัน<span class="ar">▾</span></th>
@@ -291,7 +300,8 @@ function ageText(s){
 }
 const fmtD = s => { const d = new Date(s+"T00:00:00"); return d.getDate()+" "+TH[d.getMonth()]; };
 
-let sortKey = "date", sortDir = -1, filt = "all", nearMax = 0, query = "", wkOnly = false;
+// Default ranking: biggest gain on the volume day first (user asked 26 ก.ย. 2569).
+let sortKey = "chg", sortDir = -1, filt = "all", nearMax = 0, query = "", wkOnly = false, upOnly = false;
 const RK = {HVE:0, HVY:1, HVQ:2, "":9};
 
 function timeline(hist){
@@ -337,6 +347,7 @@ function render(){
     (filt === "all" || r.label === filt) &&
     (nearMax === 0 || r.off52w >= -nearMax) &&
     (!wkOnly || !!r.wk) &&
+    (!upOnly || r.chg > 0) &&
     (query === "" || r.sym.toLowerCase().includes(query)));
 
   view.sort((a,b) => {
@@ -348,8 +359,9 @@ function render(){
   });
 
   document.getElementById("count").textContent = view.length + " / " + rows.length + " ตัว";
-  document.getElementById("body").innerHTML = view.map(r => `
+  document.getElementById("body").innerHTML = view.map((r, i) => `
     <tr>
+      <td class="rk">${i + 1}</td>
       <td class="sym">${r.sym}</td>
       <td><span class="tag ${r.label}">${r.label}</span></td>
       <td class="dim">${fmtD(r.date)}</td>
@@ -456,6 +468,7 @@ document.querySelectorAll("th[data-s]").forEach(th => {
     const k = th.dataset.s;
     if (k === sortKey) sortDir *= -1; else { sortKey = k; sortDir = (k === "sym") ? 1 : -1; }
     document.querySelectorAll("th .ar").forEach(a => a.textContent = "▾");
+    document.querySelectorAll("th[data-s]").forEach(x => x.classList.toggle("on", x === th));
     th.querySelector(".ar").textContent = sortDir === 1 ? "▴" : "▾";
     render();
   });
@@ -470,6 +483,13 @@ document.getElementById("filter").addEventListener("click", e => {
 document.getElementById("near").addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return;
   nearMax = +b.dataset.n;
+  b.parentNode.querySelectorAll("button").forEach(x =>
+    x.setAttribute("aria-pressed", String(x === b)));
+  render();
+});
+document.getElementById("upf").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  upOnly = b.dataset.u === "up";
   b.parentNode.querySelectorAll("button").forEach(x =>
     x.setAttribute("aria-pressed", String(x === b)));
   render();
