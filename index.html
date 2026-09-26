@@ -58,7 +58,10 @@ header{display:flex; flex-wrap:wrap; gap:16px 28px; align-items:flex-end;
 h1{font-size:26px; font-weight:700; letter-spacing:-.02em; margin:0; text-wrap:balance}
 .sub{color:var(--muted); font-size:13.5px; margin-top:5px}
 .disclaim{color:var(--muted); font-size:12px; margin-top:6px; padding-left:8px; border-left:2px solid var(--border-strong)}
-.meta{margin-left:auto; display:flex; gap:22px; flex-wrap:wrap}
+/* Fixed columns: the values differ per market (rule text, "x ชม.ที่แล้ว"), and with
+   auto widths every item shifted when switching tabs. */
+.meta{margin-left:auto; display:grid; grid-template-columns:150px 80px 100px 300px; gap:10px 22px}
+.meta b{white-space:normal}
 .meta div{font-size:12px; color:var(--muted)}
 .meta .ago{display:block; font-size:11px; margin-top:1px}
 .meta .ago.stale{color:var(--neg); font-weight:600}
@@ -169,7 +172,7 @@ svg.tl circle:hover{stroke:var(--ink); stroke-width:1.5}
 .tag.none{color:var(--muted); background:transparent; opacity:.5}
 .since.short{color:var(--neg); font-weight:600}
 @media (max-width:700px){
-  h1{font-size:21px} .meta{margin-left:0} .wrap{padding:20px 14px 56px}
+  h1{font-size:21px} .meta{margin-left:0; grid-template-columns:1fr 1fr; width:100%} .wrap{padding:20px 14px 56px}
   .tabs button{padding:8px 12px; font-size:13px}
 }
 </style>
