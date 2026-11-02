@@ -12,7 +12,7 @@
   --bg:#f5f6f9; --surface:#ffffff; --surface-2:#fafbfc;
   --border:#e2e5ea; --border-strong:#cdd2da;
   --ink:#12151c; --ink-2:#3d4450; --muted:#6d7480;
-  --accent:#2f6fed;
+  --accent:#2f6fed; --on-accent:#ffffff;
   --hvq:#5d6b7f; --hvq-bg:#eef0f4;
   --hvy:#2f6fed; --hvy-bg:#e7effd;
   --hve:#7c4dd6; --hve-bg:#f0e9fc;
@@ -24,7 +24,7 @@
     --bg:#101218; --surface:#181b22; --surface-2:#1d212a;
     --border:#272c36; --border-strong:#39404d;
     --ink:#e9ecf2; --ink-2:#c3c9d4; --muted:#8f97a4;
-    --accent:#6a9bff;
+    --accent:#6a9bff; --on-accent:#0b1220;
     --hvq:#98a4b5; --hvq-bg:#23282f;
     --hvy:#6a9bff; --hvy-bg:#182236;
     --hve:#a888f0; --hve-bg:#221a33;
@@ -36,7 +36,7 @@
   --bg:#101218; --surface:#181b22; --surface-2:#1d212a;
   --border:#272c36; --border-strong:#39404d;
   --ink:#e9ecf2; --ink-2:#c3c9d4; --muted:#8f97a4;
-  --accent:#6a9bff;
+  --accent:#6a9bff; --on-accent:#0b1220;
   --hvq:#98a4b5; --hvq-bg:#23282f;
   --hvy:#6a9bff; --hvy-bg:#182236;
   --hve:#a888f0; --hve-bg:#221a33;
@@ -139,15 +139,18 @@ svg.tl{display:block}
   font-size:12.5px; color:var(--muted)}
 .legend span{display:flex; align-items:center; gap:6px}
 .dot{width:9px; height:9px; border-radius:50%}
-.tabs{display:flex; gap:6px; margin-bottom:2px}
-.tabs button{border:1px solid var(--border-strong); background:var(--surface);
-  color:var(--ink-2); cursor:pointer; font-family:inherit; font-size:13.5px;
-  font-weight:600; padding:8px 16px; border-radius:8px 8px 0 0; border-bottom:0;
-  position:relative; top:1px}
-.tabs button[aria-selected="true"]{background:var(--surface); color:var(--accent);
-  border-bottom:1px solid var(--surface); z-index:1}
-.tabs button:not([aria-selected="true"]){background:var(--surface-2)}
-.tabs button:focus-visible{outline:2px solid var(--accent); outline-offset:-2px}
+/* Segmented control: the selected market is a solid accent pill so it reads at a
+   glance; the other one stays quiet until hovered. */
+.tabs{display:inline-flex; gap:4px; padding:4px; margin-bottom:16px;
+  background:var(--surface-2); border:1px solid var(--border-strong); border-radius:11px}
+.tabs button{border:0; background:transparent; color:var(--muted); cursor:pointer;
+  font-family:inherit; font-size:14px; font-weight:600; padding:8px 18px;
+  border-radius:8px; transition:background .12s,color .12s}
+.tabs button:not([aria-selected="true"]):hover{background:var(--surface); color:var(--ink)}
+.tabs button[aria-selected="true"]{background:var(--accent); color:var(--on-accent);
+  box-shadow:0 2px 8px color-mix(in srgb,var(--accent) 40%,transparent)}
+.tabs button[aria-selected="true"] small{color:var(--on-accent); opacity:.85}
+.tabs button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
 .tabs button:disabled{opacity:.45; cursor:default}
 .missing{margin:18px 0; padding:22px 20px; background:var(--surface);
   border:1px dashed var(--border-strong); border-radius:10px; color:var(--muted);
